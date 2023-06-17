@@ -1,4 +1,5 @@
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <time.h>
 #include <stdbool.h>
@@ -86,7 +87,7 @@ bool isValid(int p , struct main* main_arr , struct project* arr_projects, int n
         }
 
         else if(arr_projects[p].skills[i].lvl > main_arr->arr[skill].arr[len].lvl+1  || arr_projects[p].skills[i].lvl > main_arr->arr[skill].arr[skilled_cont_len].lvl) {
-            //free(free_cont);
+            free(free_cont);
             //printf("c\n");
             return false;
         }
