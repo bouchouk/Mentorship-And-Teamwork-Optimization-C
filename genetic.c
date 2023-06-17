@@ -282,7 +282,12 @@ int* best_cont(struct main* main_arr ,int* working_days ,struct contributor* arr
 struct population* creat_population(struct main* main_arr1 , struct project* arr_projects, struct contributor* arr_contributors,  int n_projects, int n_contributors){
     //initialise the population
     
-    int pop_size = n_projects*n_projects;
+    int pop_size = n_projects * n_projects;
+    if (pop_size > 100)
+    {
+        pop_size=100;
+    }
+    
     struct population*population = (struct population*)malloc(sizeof(struct population)*pop_size);
     for (int i = 0; i < pop_size; i++)
     {   
@@ -306,31 +311,24 @@ struct population* creat_population(struct main* main_arr1 , struct project* arr
         population[i].genome = (struct genome*)malloc(sizeof(struct genome)*n_projects);
         int*working_days=(int*)calloc(sizeof(int),n_contributors); //time axe
         int* rand_project = rand_int(0,n_projects-1);
-        for (int l = 0; l < n_projects; l++)
-        {
-            printf("%d ",rand_project[l]);
-        }
-        printf("\n");
-        
-        
         //initialize an array that contain random distinct from project 0 to n-1 
         int rand_project_len=n_projects;
         int g_len=0;
         //genome_len
-        int* rand_nonValid = (int*)malloc(sizeof(int)*n_projects);
+        //int *rand_nonValid = (int*)malloc(sizeof(int)*n_projects);
         int x = -1;
          while (rand_project_len!=0 && x!=rand_project_len)
         {   
-            int x=rand_project_len;
+            int* rand_nonValid = (int*)malloc(sizeof(int)*rand_project_len);//rand_project_len==count
+            x=rand_project_len;
             int count=0;//count for nonValidProject
             for (int j = 0; j < x; j++)
             {   
-                //hnaaaa mouchkil dyal gheda
                 bool check=isValid(rand_project[j], &main_arr , arr_projects, n_contributors);
-                printf("%d hi\n",rand_project_len);
-                printf("%d\n",check);
+                //printf("%d hi\n",rand_project_len);
+                //printf("%d\n",check);
                 if(check){
-                    printf("valid project is:%d\n",rand_project[j]);
+                    //printf("valid project is:%d\n",rand_project[j]);
                     population[i].genome[g_len].project =  rand_project[j];
                     population[i].genome[g_len].cont = best_cont(&main_arr ,working_days , arr_contributors, arr_projects ,rand_project[j], n_contributors);
                     population[i].genome[g_len].end_day = working_days[population[i].genome[g_len].cont[0]];
@@ -339,17 +337,27 @@ struct population* creat_population(struct main* main_arr1 , struct project* arr
                     g_len++;
                 }
                  else{
-                    printf("nonvalid project is:%d\n ",rand_project[j]);
+                    //printf("nonvalid project is:%d\n ",rand_project[j]);
                     rand_nonValid[count] = rand_project[j];
                     count++;
                 }  
             }
             printf("hi00000000000000000000000000000000000000000000000000\n");
-            free(rand_project);
-            rand_project = rand_nonValid;
-            int* rand_nonValid = (int*)malloc(sizeof(int)*rand_project_len);//rand_project_len==count
+             for (int y = 0; y < count; y++)
+            {
+                rand_project[y]=rand_nonValid[y];
+            } 
+            //printf("%d  %d \n ",rand_project[0],rand_nonValid[0]);
+            /* printf("\n");
+            for (int a = 0; a < count; a++)
+            {
+                printf("%d  %d \n ",rand_project[a],rand_nonValid[a]);
+            }
+            printf("\n"); */
+            free(rand_nonValid);
+            //int* rand_nonValid = (int*)malloc(sizeof(int)*rand_project_len);//rand_project_len==count
         }
-        
+        free(rand_project); 
         population[i].len=g_len;
         free(working_days);
         for (int i = 0; i < main_arr.len; i++)
@@ -361,7 +369,11 @@ struct population* creat_population(struct main* main_arr1 , struct project* arr
     return population;
 }
 struct tuple* fitness(struct population* population , struct project* arr_projects ,int n_projects){
-    int pop_size = n_projects*n_projects;
+    int pop_size = n_projects * n_projects;
+    if (pop_size > 100)
+    {
+        pop_size=100;
+    }
     struct tuple *best_two = (struct tuple*)malloc(sizeof(struct tuple)*2);
     //tuple.lvl=is the score ,tuple.cont=is the index of the genome choosen from the population
     best_two[0].lvl=0;
@@ -387,7 +399,7 @@ struct tuple* fitness(struct population* population , struct project* arr_projec
                 
             }
         }
-        printf("cout of population %d: %d\n",i,count);
+        printf("revenue of population %d: %d\n",i,count);
         if (best_two[1].lvl < count)
         {
             best_two[0].lvl = best_two[1].lvl;
