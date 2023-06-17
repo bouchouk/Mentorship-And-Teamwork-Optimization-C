@@ -80,7 +80,7 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
 }
 
  int main(){
-    FILE *pF = fopen("text1.txt", "r");
+    FILE *pF = fopen("text2.txt", "r");
     int n_contributors;
     int n_projects;
         
@@ -91,9 +91,9 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
     fscanf(pF, "%d %d", &n_contributors, &n_projects);
     
     struct main main_arr;
-    main_arr.arr=(struct skillcont*)malloc(sizeof(struct skillcont)*100);
+    main_arr.arr=(struct skillcont*)malloc(sizeof(struct skillcont)*10000);
     main_arr.len=0;
-    main_arr.space=100;
+    main_arr.space=10000;
     struct contributor* arr_contributors =(struct contributor*)malloc(sizeof(struct contributor)*n_contributors);
     struct name*skills=(struct name*)malloc(sizeof(struct name)*10000000);
     int skills_len=0; 
@@ -167,27 +167,59 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
         printf(" %d %s\n", i, arr_contributors[i].name);
     }*/
     //printf("%d\n",skills_len);
-    /*for(int j=0; j<main_arr.len ;j++){
+    for(int j=0; j<main_arr.len ;j++){
         printf("%d %s\n",j, skills[j].name);
-    }*/
+    }
     for(int i=0; i<skills_len ; i++){
         printf("%d  ",i);
         for(int j=0; j<main_arr.arr[i].len ; j++){
             printf(",(%d,%d)\n",main_arr.arr[i].arr[j].cont,main_arr.arr[i].arr[j].lvl);
         }
     }
+    printf("\n");
     /*for (int i = 0; i < n_projects; i++) //n_projects
     {
-        printf("%s %d\n",arr_projects[i].name, i);
+        printf("%s %d  %d\n ",arr_projects[i].name, i, arr_projects[i].n_skill);
         for (int j = 0; j < arr_projects[i].n_skill; j++) //arr_projects[i].n_skill
         {
             printf("(%d,%d),",arr_projects[i].skills[j].cont,arr_projects[i].skills[j].lvl);
         }
         printf("\n");
     }*/
-    //struct population* population;
-    //population =  creat_population(&main_arr , arr_projects, arr_contributors,  n_projects, n_contributors);
     
+
+    int* rand_project = rand_int(0,n_projects-1);
+    
+
+    
+    struct population* population;
+    population =  creat_population(&main_arr , arr_projects, arr_contributors,  n_projects, n_contributors);
+    /* for (int i = 0; i < n_projects * n_projects; i++)
+    {
+        for (int j = 0; j < population[i].len; j++)
+        {
+            printf("project %d\n ",population[i].genome[j].project);
+            printf("cont ");
+            for (int l = 0; l < arr_projects[population[i].genome[j].project].n_skill; l++)
+            {
+              printf("%d",population[i].genome[j].cont[l]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    } */
+    struct tuple* best_two = fitness(population , arr_projects ,n_projects);
+
+
+    
+    for (int i = 0; i < main_arr.len; i++)
+        {
+            free(main_arr.arr[i].arr);   
+        }
+    free(main_arr.arr);
+    free(arr_projects);
+    free(arr_contributors);
+    free(skills);
 
     return 0;
  }
