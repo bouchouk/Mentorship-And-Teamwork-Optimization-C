@@ -80,7 +80,7 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
 }
 
  int main(){
-    FILE *pF = fopen("text2.txt", "r");
+    FILE *pF = fopen("text3.txt", "r");
     int n_contributors;
     int n_projects;
         
@@ -209,7 +209,22 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
         printf("\n");
     } */
     struct tuple* best_two = fitness(population , arr_projects ,n_projects);
-
+/*     for (int i = 0; i < 2; i++)
+    {
+        int pop = best_two[i].cont;
+        printf("population:%d\n",pop);
+        for (int j = 0; j <population[pop].len ; j++)
+        {   
+            printf("project:%d\n",population[pop].genome[j].project);
+            for (int l = 0; l < arr_projects[population[pop].genome[j].project].n_skill; l++)
+            {
+                printf("contributor:%d\n",population[pop].genome[j].cont[l]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
+     */
 
     
     for (int i = 0; i < main_arr.len; i++)
