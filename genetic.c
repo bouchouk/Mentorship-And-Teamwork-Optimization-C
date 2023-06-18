@@ -386,11 +386,11 @@ struct population* creat_population(struct main* main_arr1 , struct project* arr
     }
     creat_genome(2 ,rand_project2 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
     int* rand_project3 = (int*)malloc(sizeof(int)*n_projects);
-    int idx1=n_projects-1;
+    int idx=n_projects-1;
     for (int i = 0; i < n_projects; i++)
     {
-        rand_project3[i] = sorted_project_deadline[idx1].index;
-        idx1--;
+        rand_project3[i] = sorted_project_deadline[idx].index;
+        idx--;
     }
     creat_genome(3 ,rand_project3 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
     free(sorted_project_deadline);
@@ -409,16 +409,38 @@ struct population* creat_population(struct main* main_arr1 , struct project* arr
     }
     creat_genome(4 ,rand_project4 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
     int* rand_project5 = (int*)malloc(sizeof(int)*n_projects);
-    int idx2=n_projects-1; 
+    idx = n_projects-1; 
     for (int i = 0; i < n_projects; i++)
     {
-        rand_project5[i] = sorted_project_score[idx2].index;
-        idx2--;
+        rand_project5[i] = sorted_project_score[idx].index;
+        idx--;
     }
     creat_genome(5 ,rand_project5 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
     free(sorted_project_score);
+    //sorted_n_skill
+    int* rand_project6 = (int*)malloc(sizeof(int)*n_projects);
+    struct project* sorted_project_n_skill= (struct project*)malloc(sizeof(struct project)*n_projects);
+    for (int i = 0; i < n_projects; i++)
+    {
+        sorted_project_n_skill[i]=arr_projects[i];
+    }
+    merge_sort_n_skill(sorted_project_n_skill,0,n_projects-1);
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project6[i] = sorted_project_n_skill[i].index;
+    }
+    creat_genome(6 ,rand_project6 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    int* rand_project7 = (int*)malloc(sizeof(int)*n_projects);
+    idx = n_projects-1; 
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project7[i] = sorted_project_n_skill[idx].index;
+        idx--;
+    }
+    creat_genome(7 ,rand_project7 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    free(sorted_project_score);
     //random genome
-    for (int i = 6; i < pop_size; i++)
+    for (int i = 8; i < pop_size; i++)
     {   
         printf("main loop %d\n",i);
         int* rand_project = rand_int(0,n_projects-1);
