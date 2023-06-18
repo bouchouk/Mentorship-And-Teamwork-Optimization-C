@@ -80,7 +80,7 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
 }
 
  int main(){
-    FILE *pF = fopen("text3.txt", "r");
+    FILE *pF = fopen("text2.txt", "r");
     int n_contributors;
     int n_projects;
         
@@ -138,6 +138,7 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
     struct project* arr_projects =(struct project*)malloc(sizeof(struct project)*n_projects);
     for(int i = 0; i<n_projects ;i++){
         struct project a;
+        a.index=i;
         fscanf(pF,"%s %d %d %d %d",a.name , &a.days, &a.score , &a.deadline ,&a.n_skill);
         a.skills=(struct tuple*)malloc(sizeof(struct tuple)*a.n_skill);
         for(int j=0 ; j<a.n_skill ; j++){
@@ -231,9 +232,16 @@ void append_skillcont(struct skillcont* cont,struct tuple value) {
         {
             free(main_arr.arr[i].arr);   
         }
+    for (int i = 0; i < n_projects; i++)
+    {
+        free(arr_projects[i].skills);
+    }
+    
+    free(population);
     free(main_arr.arr);
     free(arr_projects);
     free(arr_contributors);
+    free(best_two);
     free(skills);
 
     return 0;
