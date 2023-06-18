@@ -29,6 +29,7 @@ struct project{
     int n_skill;
     int score;
     int deadline;
+    int index;
     char name[21];
     struct tuple*skills;
 };
@@ -50,5 +51,11 @@ int* best_cont(struct main* main_arr ,int* working_days ,struct contributor* arr
 struct population* creat_population(struct main* main_arr , struct project* arr_projects, struct contributor* arr_contributors,  int n_projects,int n_contributors);
 void merge_sort(struct tuple *a, int left, int right);
 void merge(struct tuple *a,int left,int mid,int right);
+void merge_sort_deadline(struct project *a, int left, int right);
+void merge_deadline(struct project *a,int left,int mid,int right);
+void merge_sort_score(struct project *a, int left, int right);
+void merge_score(struct project *a,int left,int mid,int right);
+void merge_sort_days(struct project *a, int left, int right);
+void merge_days(struct project *a,int left,int mid,int right);
 void append_skillcont(struct skillcont* cont,struct tuple value);
 struct tuple* fitness(struct population* population , struct project* arr_projects ,int n_projects);
