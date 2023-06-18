@@ -1,49 +1,3 @@
-
-struct main
-{
-    int len;
-    int space;
-    struct skillcont*arr;
-};
-struct tuple
-{
-    int cont; //or skill for the project
-    int lvl;
-};
-struct skillcont
-{
-    int len;
-    int space;
-    struct tuple* arr;
-};
-struct name
-{
-    char name[21];
-};
-struct contributor{
-    int value;
-    char name[21]; 
-};
-struct project{
-    int days;
-    int n_skill;
-    int score;
-    int deadline;
-    int index;
-    char name[21];
-    struct tuple*skills;
-};
-struct genome{
-    int project;
-    int end_day;
-    int*cont;
-};
-struct population
-{
-    int len;
-    struct genome* genome;
-};
-
 void shuffleArray(int* array, int size);
 int* rand_int(int x, int y);
 bool isValid(int p , struct main* main_arr , struct project* arr_projects, int n_contributors);
@@ -59,5 +13,7 @@ void merge_sort_days(struct project *a, int left, int right);
 void merge_days(struct project *a,int left,int mid,int right);
 void merge_sort_n_skill(struct project *a, int left, int right);
 void merge_n_skill(struct project *a,int left,int mid,int right);
+void append_main(struct main* skill,struct skillcont value);
 void append_skillcont(struct skillcont* cont,struct tuple value);
 struct tuple* fitness(struct population* population , struct project* arr_projects ,int n_projects);
+void creat_genome(int i ,int*rand_project,struct population* population,struct main* main_arr1 , struct project* arr_projects, struct contributor* arr_contributors,  int n_projects, int n_contributors);
