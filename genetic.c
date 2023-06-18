@@ -108,6 +108,7 @@ int* best_cont(struct main* main_arr ,int* working_days ,struct contributor* arr
     int* free_cont = (int*)calloc(sizeof(int),n_contrubors);
     for (int i = 0; i < arr_projects[p].n_skill ; i++){
         int skill=arr_projects[p].skills[i].cont;
+        
         if (main_arr->arr[skill].len!=1 )
         {   
             int index = binary_search(&main_arr->arr[skill] , arr_projects[p].skills[i].lvl);
@@ -218,7 +219,6 @@ int* best_cont(struct main* main_arr ,int* working_days ,struct contributor* arr
                 }
             }
             
-            
         }
         else if (free_cont[main_arr->arr[skill].arr[0].cont]==0)
         {
@@ -277,7 +277,66 @@ int* best_cont(struct main* main_arr ,int* working_days ,struct contributor* arr
 
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
+void creat_genome(int i ,int*rand_project,struct population* population,struct main* main_arr1 , struct project* arr_projects, struct contributor* arr_contributors,  int n_projects, int n_contributors)
+{        
+    struct main main_arr ;
+    main_arr.arr=(struct skillcont*)malloc(sizeof(struct skillcont)*main_arr1->space);
+    main_arr.len = main_arr1->len;
+    for (int m = 0; m < main_arr.len; m++)
+    {   
+        main_arr.arr[m].len = main_arr1->arr[m].len;
+        main_arr.arr[m].arr = (struct tuple*)malloc(sizeof(struct tuple)*main_arr.arr[m].len);
+        for (int j = 0; j < main_arr.arr[m].len; j++)
+        {
+            main_arr.arr[m].arr[j].cont = main_arr1->arr[m].arr[j].cont;
+            main_arr.arr[m].arr[j].lvl = main_arr1->arr[m].arr[j].lvl;
+        }
+            
+    }
+        
+    population[i].genome = (struct genome*)malloc(sizeof(struct genome)*n_projects);
+    int*working_days=(int*)calloc(sizeof(int),n_contributors); //time axe
+    //initialize an array that contain random distinct from project 0 to n-1 
+    int rand_project_len=n_projects;
+    int g_len=0;
+    int x = -1;
+     while (rand_project_len!=0 && x!=rand_project_len)
+    {   
+        int* rand_nonValid = (int*)malloc(sizeof(int)*rand_project_len);//rand_project_len==count
+        x=rand_project_len;
+        int count=0;//count for nonValidProject
+        for (int j = 0; j < x; j++)
+        {   
+            bool check=isValid(rand_project[j], &main_arr , arr_projects, n_contributors);
+            if(check){
+                population[i].genome[g_len].project =  rand_project[j];
+                population[i].genome[g_len].cont = best_cont(&main_arr ,working_days , arr_contributors, arr_projects ,rand_project[j], n_contributors);
+                population[i].genome[g_len].end_day = working_days[population[i].genome[g_len].cont[0]];
+                rand_project_len--; 
+                g_len++;
+            }
+             else{
+                rand_nonValid[count] = rand_project[j];
+                count++;
+            }  
+        }
+        for (int y = 0; y < count; y++)
+        {
+            rand_project[y]=rand_nonValid[y];            
+        } 
+        free(rand_nonValid);
+    }
+    free(rand_project); 
+    population[i].len=g_len;
+    free(working_days);
+    for (int i = 0; i < main_arr.len; i++)
+    {
+        free(main_arr.arr[i].arr); 
+    }
+    free(main_arr.arr);
+}
+///////////////////////////////////////////////////////////////////////////////
 
 struct population* creat_population(struct main* main_arr1 , struct project* arr_projects, struct contributor* arr_contributors,  int n_projects, int n_contributors){
     //initialise the population
@@ -289,82 +348,82 @@ struct population* creat_population(struct main* main_arr1 , struct project* arr
     }
     
     struct population*population = (struct population*)malloc(sizeof(struct population)*pop_size);
-    for (int i = 0; i < pop_size; i++)
+    //genome of sorted array
+    //sorted days
+    int* rand_project0 = (int*)malloc(sizeof(int)*n_projects);
+    struct project* sorted_project_days = (struct project*)malloc(sizeof(struct project)*n_projects);
+    for (int i = 0; i < n_projects; i++)
+    {
+        sorted_project_days[i]=arr_projects[i];
+    }
+    merge_sort_days(sorted_project_days,0,n_projects-1);
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project0[i] = sorted_project_days[i].index;
+    } 
+    creat_genome(0 ,rand_project0 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    int* rand_project1 = (int*)malloc(sizeof(int)*n_projects);
+    int idx0=n_projects-1;
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project1[i] = sorted_project_days[idx0].index;
+        idx0--;
+    }
+    creat_genome(1 ,rand_project1 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    printf("hi%d\n",pop_size);
+    free(sorted_project_days);
+    //sorted deadline
+    int* rand_project2 = (int*)malloc(sizeof(int)*n_projects);
+    struct project* sorted_project_deadline= (struct project*)malloc(sizeof(struct project)*n_projects);
+    for (int i = 0; i < n_projects; i++)
+    {
+        sorted_project_deadline[i]=arr_projects[i];
+    }
+    merge_sort_deadline(sorted_project_deadline,0,n_projects-1);
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project2[i] = sorted_project_deadline[i].index;
+    }
+    creat_genome(2 ,rand_project2 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    int* rand_project3 = (int*)malloc(sizeof(int)*n_projects);
+    int idx1=n_projects-1;
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project3[i] = sorted_project_deadline[idx1].index;
+        idx1--;
+    }
+    creat_genome(3 ,rand_project3 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    free(sorted_project_deadline);
+
+    //sorted_score
+    int* rand_project4 = (int*)malloc(sizeof(int)*n_projects);
+    struct project* sorted_project_score= (struct project*)malloc(sizeof(struct project)*n_projects);
+    for (int i = 0; i < n_projects; i++)
+    {
+        sorted_project_score[i]=arr_projects[i];
+    }
+    merge_sort_score(sorted_project_score,0,n_projects-1);
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project4[i] = sorted_project_score[i].index;
+    }
+    creat_genome(4 ,rand_project4 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    int* rand_project5 = (int*)malloc(sizeof(int)*n_projects);
+    int idx2=n_projects-1; 
+    for (int i = 0; i < n_projects; i++)
+    {
+        rand_project5[i] = sorted_project_score[idx2].index;
+        idx2--;
+    }
+    creat_genome(5 ,rand_project5 , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+    free(sorted_project_score);
+    //random genome
+    for (int i = 6; i < pop_size; i++)
     {   
         printf("main loop %d\n",i);
-        //copy th main_arr
-        struct main main_arr ;
-        main_arr.arr=(struct skillcont*)malloc(sizeof(struct skillcont)*main_arr1->space);
-        main_arr.len = main_arr1->len;
-        for (int i = 0; i < main_arr.len; i++)
-        {   
-            main_arr.arr[i].len = main_arr1->arr[i].len;
-            main_arr.arr[i].arr = (struct tuple*)malloc(sizeof(struct tuple)*main_arr.arr[i].len);
-            for (int j = 0; j < main_arr.arr[i].len; j++)
-            {
-                main_arr.arr[i].arr[j].cont = main_arr1->arr[i].arr[j].cont;
-                main_arr.arr[i].arr[j].lvl = main_arr1->arr[i].arr[j].lvl;
-            }
-            
-        }
-        
-        population[i].genome = (struct genome*)malloc(sizeof(struct genome)*n_projects);
-        int*working_days=(int*)calloc(sizeof(int),n_contributors); //time axe
         int* rand_project = rand_int(0,n_projects-1);
-        //initialize an array that contain random distinct from project 0 to n-1 
-        int rand_project_len=n_projects;
-        int g_len=0;
-        //genome_len
-        //int *rand_nonValid = (int*)malloc(sizeof(int)*n_projects);
-        int x = -1;
-         while (rand_project_len!=0 && x!=rand_project_len)
-        {   
-            int* rand_nonValid = (int*)malloc(sizeof(int)*rand_project_len);//rand_project_len==count
-            x=rand_project_len;
-            int count=0;//count for nonValidProject
-            for (int j = 0; j < x; j++)
-            {   
-                bool check=isValid(rand_project[j], &main_arr , arr_projects, n_contributors);
-                //printf("%d hi\n",rand_project_len);
-                //printf("%d\n",check);
-                if(check){
-                    //printf("valid project is:%d\n",rand_project[j]);
-                    population[i].genome[g_len].project =  rand_project[j];
-                    population[i].genome[g_len].cont = best_cont(&main_arr ,working_days , arr_contributors, arr_projects ,rand_project[j], n_contributors);
-                    population[i].genome[g_len].end_day = working_days[population[i].genome[g_len].cont[0]];
-                    //it should return array of contr(int)and update the score of skills and the working_day_arr
-                    rand_project_len--; 
-                    g_len++;
-                }
-                 else{
-                    //printf("nonvalid project is:%d\n ",rand_project[j]);
-                    rand_nonValid[count] = rand_project[j];
-                    count++;
-                }  
-            }
-            printf("hi00000000000000000000000000000000000000000000000000\n");
-             for (int y = 0; y < count; y++)
-            {
-                rand_project[y]=rand_nonValid[y];
-            } 
-            //printf("%d  %d \n ",rand_project[0],rand_nonValid[0]);
-            /* printf("\n");
-            for (int a = 0; a < count; a++)
-            {
-                printf("%d  %d \n ",rand_project[a],rand_nonValid[a]);
-            }
-            printf("\n"); */
-            free(rand_nonValid);
-            //int* rand_nonValid = (int*)malloc(sizeof(int)*rand_project_len);//rand_project_len==count
-        }
-        free(rand_project); 
-        population[i].len=g_len;
-        free(working_days);
-        for (int i = 0; i < main_arr.len; i++)
-        {
-            free(main_arr.arr[i].arr);   
-        }
-        free(main_arr.arr); 
+        creat_genome(i ,rand_project , population, main_arr1 , arr_projects, arr_contributors, n_projects, n_contributors);
+        
     }
     return population;
 }
