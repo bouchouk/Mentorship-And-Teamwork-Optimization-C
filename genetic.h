@@ -57,5 +57,7 @@ void merge_sort_score(struct project *a, int left, int right);
 void merge_score(struct project *a,int left,int mid,int right);
 void merge_sort_days(struct project *a, int left, int right);
 void merge_days(struct project *a,int left,int mid,int right);
+void merge_sort_n_skill(struct project *a, int left, int right);
+void merge_n_skill(struct project *a,int left,int mid,int right);
 void append_skillcont(struct skillcont* cont,struct tuple value);
 struct tuple* fitness(struct population* population , struct project* arr_projects ,int n_projects);
