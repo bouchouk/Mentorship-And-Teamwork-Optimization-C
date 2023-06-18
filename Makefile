@@ -1,17 +1,17 @@
-SRCS = main.c genetic.c
+SRCS = main.c genetic.c merge_sort.c
 OBJS = ${SRCS:%.c=%.o}
 NAME = main
 
 # Linking step:
 ${NAME}: ${OBJS}
-	gcc -g -fsanitize=address ${OBJS} -o ${NAME}
+	gcc -g ${OBJS} -o ${NAME}
 
 # Compilation step:
 %.o: %.c math.h
-	gcc -g -fsanitize=address -c $< -o $@
+	gcc -g -c $< -o $@
 
 clean:
-	rm -f genetic.o main.o
+	rm -f genetic.o main.o merge_sort.o
 
 fclean: clean
 	rm -f main
